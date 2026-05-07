@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  # ==========================================
+  # 1. Base de Datos (Segura y Persistente)
+  # ==========================================
+  db:
+    build: 
+      context: ./db
+      dockerfile: Dockerfile
+    container_name: tienda-db
+    ports:
+      - "3307:3306"
+    # ¡Aquí ocurre la magia de la seguridad! Inyectamos las credenciales desde afuera.
+    environment:
+      MYSQL_ROOT_PASSWORD: admin123
+      MYSQL_DATABASE: tienda_perritos
+      MYSQL_USER: alumno
+      MYSQL_PASSWORD: alumno123
+    # ¡Aquí ocurre la magia de la persistencia!
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - innovatech_net
+
+  # ==========================================
+  # 2. Backend (API Node.js)
+  # ==========================================
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: tienda-backend
+    ports:
+      - "3001:3001"
+    environment:
+      # Le decimos al backend cómo conectarse a la DB
+      DB_HOST: db
+      DB_USER: alumno
+      DB_PASSWORD: alumno123
+      DB_NAME: tienda_perritos
+      DB_PORT: 3306
+    depends_on:
+      - db
+    networks:
+      - innovatech_net
+
+  # ==========================================
+  # 3. Frontend (Nginx Unprivileged)
+  # ==========================================
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: tienda-frontend
+    # Recuerda que cambiamos a un usuario no root, por lo que usamos el puerto 8080 internamente
+    ports:
+      - "80:8080"
+    depends_on:
+      - backend
+    networks:
+      - innovatech_net
+
+# ==========================================
+# Definición de Redes y Volúmenes (Persistencia)
+# ==========================================
+networks:
+  innovatech_net:
+    driver: bridge
+
+volumes:
+  db_data: # Este es el "Named Volume" que protegerá tu información
