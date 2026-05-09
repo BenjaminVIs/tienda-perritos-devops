@@ -30,4 +30,4 @@ USER nginx
 # Exponemos el puerto 8080 (los usuarios no root no pueden usar puertos menores a 1024)
 EXPOSE 8080
 
-# Esto es para despertar a GitHub
+# Despertando a GitHub frontend
