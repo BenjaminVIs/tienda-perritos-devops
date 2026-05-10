@@ -8,3 +8,5 @@ COPY init.sql /docker-entrypoint-initdb.d/
 EXPOSE 3306
 
 # Despertando a GitHub db
+
+# Despertar a GitHub db 2.0
