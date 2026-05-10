@@ -2,71 +2,71 @@ version: '3.8'
 
 services:
   # ==========================================
-  # 1. Base de Datos (Segura y Persistente)
+  # 1. Base de Datos (Instancia: DATA)
   # ==========================================
   db:
     build: 
       context: ./db
       dockerfile: Dockerfile
     container_name: tienda-db
+    restart: always
+    # Mapeamos 3306:3306 para que sea estándar y fácil de conectar
     ports:
-      - "3307:3306"
-    # ¡Aquí ocurre la magia de la seguridad! Inyectamos las credenciales desde afuera.
+      - "3306:3306"
     environment:
       MYSQL_ROOT_PASSWORD: admin123
       MYSQL_DATABASE: tienda_perritos
       MYSQL_USER: alumno
       MYSQL_PASSWORD: alumno123
-    # ¡Aquí ocurre la magia de la persistencia!
     volumes:
       - db_data:/var/lib/mysql
     networks:
       - innovatech_net
 
   # ==========================================
-  # 2. Backend (API Node.js)
+  # 2. Backend (Instancia: BACKEND)
   # ==========================================
   backend:
     build: 
       context: ./backend
       dockerfile: Dockerfile
     container_name: tienda-backend
+    restart: always
     ports:
       - "3001:3001"
     environment:
-      # Le decimos al backend cómo conectarse a la DB
-      DB_HOST: db
-      DB_USER: alumno
-      DB_PASSWORD: alumno123
+      # CAMBIO CLAVE: Aquí usamos la IP Privada de la instancia de DATA
+      # para que el Back encuentre la base de datos en AWS
+      DB_HOST: 10.0.2.134  
+      DB_USER: root
+      DB_PASSWORD: admin123
       DB_NAME: tienda_perritos
       DB_PORT: 3306
-    depends_on:
-      - db
     networks:
       - innovatech_net
 
   # ==========================================
-  # 3. Frontend (Nginx Unprivileged)
+  # 3. Frontend (Instancia: FRONTEND)
   # ==========================================
   frontend:
     build: 
       context: ./frontend
       dockerfile: Dockerfile
     container_name: tienda-frontend
-    # Recuerda que cambiamos a un usuario no root, por lo que usamos el puerto 8080 internamente
+    restart: always
+    # Cumplimos con usuario NO ROOT: Nginx corre en 8080 y lo sacamos por el 80
     ports:
       - "80:8080"
-    depends_on:
-      - backend
     networks:
       - innovatech_net
 
 # ==========================================
-# Definición de Redes y Volúmenes (Persistencia)
+# Redes y Volúmenes (Persistencia y Aislamiento)
 # ==========================================
 networks:
   innovatech_net:
     driver: bridge
 
 volumes:
-  db_data: # Este es el "Named Volume" que protegerá tu información
+  db_data:
+    # Esto asegura que los perritos no se borren si reinicias el contenedor
