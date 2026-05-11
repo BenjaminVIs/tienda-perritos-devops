@@ -37,3 +37,5 @@ EXPOSE 8080
 # despertando a GitHub frontend de nuevo xdxd
 
 # despertar a GitHub frontend 
+
+# despertar a GitHub frontend 2.0
