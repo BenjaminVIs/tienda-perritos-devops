@@ -31,3 +31,5 @@ USER nginx
 EXPOSE 8080
 
 # Despertando a GitHub frontend
+
+# Despertando a GitHub frontend 2.0
