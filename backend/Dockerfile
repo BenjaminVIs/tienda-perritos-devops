@@ -13,5 +13,3 @@ EXPOSE 3001
 CMD ["npm", "start"]
 
 # Despertando a GitHub backend
-
-# Despertando a GitHub backend 2.0
