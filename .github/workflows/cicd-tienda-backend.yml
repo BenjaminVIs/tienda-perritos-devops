@@ -1,5 +1,6 @@
 name: CI/CD Tienda Perritos - Backend
 
+# forzando despliegue
 on:
   push:
     branches: [ "deploy" ]
