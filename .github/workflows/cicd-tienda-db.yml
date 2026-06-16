@@ -1,11 +1,9 @@
 name: CI/CD Tienda Perritos - DB
 
-# forzando despliegue
 on:
   push:
     branches: [ "deploy" ]
-    paths:
-      - "db/**"
+  workflow_dispatch:
 
 jobs:
   build-push-deploy-db:

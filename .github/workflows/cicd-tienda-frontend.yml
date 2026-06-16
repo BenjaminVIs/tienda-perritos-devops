@@ -1,11 +1,9 @@
 name: CI/CD Tienda Perritos - Frontend
 
-# forzando despliegue
 on:
   push:
     branches: [ "deploy" ]
-    paths:
-      - "frontend/**"
+  workflow_dispatch:
 
 jobs:
   build-push-deploy-frontend:
